@@ -6,13 +6,17 @@ public class PlayerLook : MonoBehaviour
     InputAction move;
 
     [Header("Look")]
-    float mouseSensitivity = 100f;
+    public float mouseSensitivity = 100f;
 
     float xRotation = 0f;
     float yRotation = 0f;
 
     public float topClamp = -90f;
     public float bottomClamp = 90f;
+    public Transform playerBody; 
+    public Transform camera; 
+
+
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -20,6 +24,12 @@ public class PlayerLook : MonoBehaviour
     {
         // Locking corsour to the middle of the screen and making it invisible
         Cursor.lockState = CursorLockMode.Locked;
+
+        if (playerBody == null) 
+            playerBody = transform;
+        
+        if (camera == null) 
+            camera = Camera.main.transform;
     }
 
     // Update is called once per frame
@@ -37,6 +47,7 @@ public class PlayerLook : MonoBehaviour
         yRotation += delta.x * mouseSensitivity * Time.deltaTime;
 
         //Apply rotation
-        transform.localRotation = Quaternion.Euler(xRotation, yRotation, 0f);
+        transform.localRotation = Quaternion.Euler(0f, yRotation, 0f);
+        camera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
     }
 }
