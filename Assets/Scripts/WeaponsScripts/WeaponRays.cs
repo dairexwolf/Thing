@@ -116,8 +116,9 @@ public class WeaponRays : MonoBehaviour
             // If player hit anything
             lineRenderer.SetPosition(0, bulletSpawn.position);
             lineRenderer.SetPosition(1, raycastHit.point);
-            
-            if (raycastHit.collider != null)
+            Target target;
+            var targetGO = raycastHit.collider.gameObject;
+            if (raycastHit.collider != null && targetGO.CompareTag("Target") && targetGO.TryGetComponent<Target>(out target))
             {
                 Collider objectWeHit = raycastHit.collider;
                 Debug.Log(raycastHit.distance);
@@ -173,7 +174,7 @@ public class WeaponRays : MonoBehaviour
     public Vector3 CalculateDirAndSpread()
     {
         #region PhysicMethod
-        //// Метод из тутора, но у меня к нему вопросы. Напишу чтобы был, так как для физической стрельбы норм
+        //// РњРµС‚РѕРґ РёР· С‚СѓС‚РѕСЂР°, РЅРѕ Сѓ РјРµРЅСЏ Рє РЅРµРјСѓ РІРѕРїСЂРѕСЃС‹. РќР°РїРёС€Сѓ С‡С‚РѕР±С‹ Р±С‹Р», С‚Р°Рє РєР°Рє РґР»СЏ С„РёР·РёС‡РµСЃРєРѕР№ СЃС‚СЂРµР»СЊР±С‹ РЅРѕСЂРј
 
         //// Shooting from the middle of the screen to check where are pointing at
         //Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
@@ -191,7 +192,7 @@ public class WeaponRays : MonoBehaviour
         //    targetPoint = ray.GetPoint(100f);
         //}
 
-        //// Тут получается вопрос, что разброс будет зависить от длины вектора направления, куда попал игрок. А зачем??? И будет ли на самом деле такое?
+        //// РўСѓС‚ РїРѕР»СѓС‡Р°РµС‚СЃСЏ РІРѕРїСЂРѕСЃ, С‡С‚Рѕ СЂР°Р·Р±СЂРѕСЃ Р±СѓРґРµС‚ Р·Р°РІРёСЃРёС‚СЊ РѕС‚ РґР»РёРЅС‹ РІРµРєС‚РѕСЂР° РЅР°РїСЂР°РІР»РµРЅРёСЏ, РєСѓРґР° РїРѕРїР°Р» РёРіСЂРѕРє. Рђ Р·Р°С‡РµРј??? Р Р±СѓРґРµС‚ Р»Рё РЅР° СЃР°РјРѕРј РґРµР»Рµ С‚Р°РєРѕРµ?
         //Vector3 dir = targetPoint - bulletSpawn.position;
 
 
