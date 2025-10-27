@@ -14,6 +14,7 @@ public class WeaponRays : MonoBehaviour
     public bool readyToShoot;
     bool allowReset = true;
     public float shootingDelay = 2f;
+    public float bulletForce = 10f;
 
     // Burst
     [Header("Burst")]
@@ -119,9 +120,18 @@ public class WeaponRays : MonoBehaviour
             var targetGO = raycastHit.collider.gameObject;
             if (raycastHit.collider != null && targetGO.CompareTag("Target") && targetGO.TryGetComponent<Target>(out target))
             {
+                Collider objectWeHit = raycastHit.collider;
                 Debug.Log(raycastHit.distance);
-                Debug.Log(raycastHit.collider.gameObject.name);
-                target.ShotDown((raycastHit.point - bulletSpawn.position).normalized * 10f);
+                Debug.Log(objectWeHit.gameObject.name);
+                if(objectWeHit.gameObject.CompareTag("Target"))
+                {
+                    if (raycastHit.rigidbody != null)
+                        raycastHit.rigidbody.AddForce((raycastHit.point - bulletSpawn.position).normalized * bulletForce, ForceMode.Impulse);
+                    else
+                        Debug.Log("No rigidbody component? o_O");
+                }
+
+                CreateBulletImpactEffect(raycastHit);
             }
         }
 
@@ -211,6 +221,13 @@ public class WeaponRays : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         lineRenderer.enabled = false;
+    }
+
+    void CreateBulletImpactEffect(RaycastHit hit)
+    {
+        GameObject hole = Instantiate(GlobalRefs.Instance.bulletImpactEffectPrefab, hit.point, Quaternion.LookRotation(hit.normal));
+
+        hole.transform.SetParent(hit.collider.gameObject.transform);
     }
 
 }

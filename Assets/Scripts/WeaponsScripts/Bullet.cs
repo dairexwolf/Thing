@@ -38,7 +38,22 @@ public class Bullet : MonoBehaviour
         if(collision.gameObject.CompareTag("Target"))
         {
             print("hit " + collision.gameObject.name);
+
+            CreateBulletImpactEffect(collision);
+
             Destroy(gameObject);
         }
+    }
+
+    void CreateBulletImpactEffect(Collision objectWeHit)
+    {
+        ContactPoint contact = objectWeHit.contacts[0];
+
+        GameObject hole = Instantiate(GlobalRefs.Instance.bulletImpactEffectPrefab, contact.point, Quaternion.LookRotation(contact.normal));
+
+        hole.transform.SetParent(objectWeHit.gameObject.transform);
+
+
+
     }
 }
