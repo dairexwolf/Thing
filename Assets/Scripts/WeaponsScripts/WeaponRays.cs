@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
+using Random = UnityEngine.Random;
 
 public class WeaponRays : MonoBehaviour
 {
@@ -108,39 +110,68 @@ public class WeaponRays : MonoBehaviour
         readyToShoot = false;
 
         Vector3 shootingDir = CalculateDirAndSpread().normalized;
-
         // Start Ray
-        if (Physics.Raycast(bulletSpawn.position, shootingDir, out raycastHit, maxDistance))
+        RaycastHit[] hits = Physics.RaycastAll(bulletSpawn.position, shootingDir, maxDistance);
+        Array.Reverse(hits);
+        bool stop = false;
+
+        foreach (RaycastHit raycastHit in hits)
         {
             // Debug.DrawRay(bulletSpawn.position, bulletSpawn.forward, Color.red, 2f);
             // If player hit anything
             lineRenderer.SetPosition(0, bulletSpawn.position);
             lineRenderer.SetPosition(1, raycastHit.point);
-            Target target;
-            var targetGO = raycastHit.collider.gameObject;
-            if (raycastHit.collider != null && targetGO.CompareTag("Target") && targetGO.TryGetComponent<Target>(out target))
+            GameObject targetGO = raycastHit.collider.gameObject;
+            if (raycastHit.collider != null)
             {
                 Collider objectWeHit = raycastHit.collider;
                 Debug.Log(raycastHit.distance);
                 Debug.Log(objectWeHit.gameObject.name);
-                if(objectWeHit.gameObject.CompareTag("Target"))
+
+                stop = true;
+
+                // Стоит отдаль реализацию этих дейситвий самому объекту, а не этому скрипту. Сделать это можно через делегаты и через ивенты.
+                // TODO: посмотреть паттерны событийного проектирования
+                if (objectWeHit.gameObject.CompareTag("Target"))
                 {
                     if (raycastHit.rigidbody != null)
-                        raycastHit.rigidbody.AddForce((raycastHit.point - bulletSpawn.position).normalized * bulletForce, ForceMode.Impulse);
+                        // raycastHit.rigidbody.AddForce((raycastHit.point - bulletSpawn.position).normalized * bulletForce, ForceMode.Impulse);
+                        objectWeHit.gameObject.GetComponent<Target>().ShotDown((raycastHit.point - bulletSpawn.position).normalized * bulletForce);
                     else
                         Debug.Log("No rigidbody component? o_O");
                 }
 
-                CreateBulletImpactEffect(raycastHit);
-            }
-        }
+                if (objectWeHit.gameObject.CompareTag("Bottle"))
+                {
+                    Bottle bottleScript = objectWeHit.gameObject.GetComponent<Bottle>();
+                    if (bottleScript!=null)
+                    {
+                        if (bottleScript.enabled)
+                        {
+                            bottleScript.Shatter(raycastHit.point, bulletSpawn.position, bulletForce);
+                        }
+                        
+                    }
+                    else
+                        raycastHit.rigidbody.AddForce((raycastHit.point - bulletSpawn.position).normalized * bulletForce, ForceMode.Impulse);
+                    stop = false;
+                    
+                }
 
-        else
-        {
-            // If player missed
-            Vector3 endPosition = bulletSpawn.position + bulletSpawn.forward * maxDistance;
-            lineRenderer.SetPosition(0, bulletSpawn.position);
-            lineRenderer.SetPosition(1, endPosition);
+                if (stop)
+                {
+                    CreateBulletImpactEffect(raycastHit);
+                    break;
+                }
+            }
+
+            else
+            {
+                // If player missed
+                Vector3 endPosition = bulletSpawn.position + bulletSpawn.forward * maxDistance;
+                lineRenderer.SetPosition(0, bulletSpawn.position);
+                lineRenderer.SetPosition(1, endPosition);
+            }
         }
 
         lineRenderer.enabled = true;
@@ -226,7 +257,6 @@ public class WeaponRays : MonoBehaviour
     void CreateBulletImpactEffect(RaycastHit hit)
     {
         GameObject hole = Instantiate(GlobalRefs.Instance.bulletImpactEffectPrefab, hit.point, Quaternion.LookRotation(hit.normal));
-
         hole.transform.SetParent(hit.collider.gameObject.transform);
     }
 
