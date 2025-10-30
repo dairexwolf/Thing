@@ -23,10 +23,11 @@ public class Bottle : MonoBehaviour
 
     /// <summary>
     /// Уничтожение бутылки и отдача ему силы для отпрасывания.
+    /// 
+    /// <param name="hitPoint">hitPoint: Куда попал. Стоит отдавать raycastHit.point</param>
+    /// <param name="bulletSpawnPosition">bulletSpawnPosition: Откуда стреляли. Стоит отдавать bulletSpawn.position, но с рандомными добавлениями к x и y для того, чтобы разлетались в стороны</param>
+    /// <param name="bulletForce">bulletForce: Сила пули, берется из характеристик оружия.</param>
     /// </summary>
-    /// <param name="hitPoint">Куда попал. Стоит отдавать raycastHit.point</param>
-    /// <param name="bulletSpawnPosition">Откуда стреляли. Стоит отдавать bulletSpawn.position, но с рандомными добавлениями к x и y для того, чтобы разлетались в стороны</param>
-    /// <param name="bulletForce">Сила пули, берется из характеристик оружия.</param>
     public void Shatter(Vector3 hitPoint, Vector3 bulletSpawnPosition, float bulletForce)
     {
         foreach(Rigidbody part in allParts)
