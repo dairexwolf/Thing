@@ -5,9 +5,13 @@ public class Target : MonoBehaviour
 
     private Rigidbody _rigidbody;
 
+
+    private AudioSource audioSource;
+
     public void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     public void ShotDown(Vector3 impulse)
@@ -19,5 +23,6 @@ public class Target : MonoBehaviour
         }
         else
             Debug.Log("No rigidbody component? o_O");
+        audioSource.Play();
     }
 }

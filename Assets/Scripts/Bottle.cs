@@ -12,9 +12,13 @@ public class Bottle : MonoBehaviour
     public List<Rigidbody> allParts = new List<Rigidbody>();
     private BoxCollider collider;
 
+
+    private AudioSource audioSource;
+
     private void Awake()
     {
         collider = GetComponent<BoxCollider>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     /// <summary>
@@ -33,5 +37,6 @@ public class Bottle : MonoBehaviour
         }
         collider.enabled = false;
         this.enabled = false;
+        audioSource.Play();
     }
 }
