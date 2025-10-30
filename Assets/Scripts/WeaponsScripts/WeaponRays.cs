@@ -45,9 +45,13 @@ public class WeaponRays : MonoBehaviour
     public Transform bulletSpawn;
     public float maxDistance = 100f;
 
+    [Header("Effects")]
+    public GameObject muzzleEffect;
+    private ParticleSystem particleSystem;
+
     InputAction attackAction;
 
-    RaycastHit raycastHit;
+
 
     // Test
     private LineRenderer lineRenderer;
@@ -83,6 +87,7 @@ public class WeaponRays : MonoBehaviour
         #endregion
 
         audioSource = GetComponent<AudioSource>();
+        particleSystem = muzzleEffect.GetComponent<ParticleSystem>();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -108,6 +113,7 @@ public class WeaponRays : MonoBehaviour
             burstBulletsLeft = bulletsPerBurst;
             FireWeapon();
             audioSource.Play();
+            particleSystem.Play();
         }
     }
 
