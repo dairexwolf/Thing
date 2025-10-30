@@ -656,7 +656,6 @@ GameObject:
   - component: {fileID: 525513092}
   - component: {fileID: 525513094}
   - component: {fileID: 525513093}
-  - component: {fileID: 525513096}
   - component: {fileID: 525513095}
   m_Layer: 0
   m_Name: Player
@@ -917,14 +916,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!81 &525513096
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 525513089}
-  m_Enabled: 1
 --- !u!1 &534018572
 GameObject:
   m_ObjectHideFlags: 0
@@ -2850,8 +2841,8 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_Resource: {fileID: 8300000, guid: 5c230176e14976744b5a41a41faf2420, type: 3}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -3001,6 +2992,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3459631570541570409, guid: 32ee6867fbf831a448cf96b0f3da3784, type: 3}
+      propertyPath: panLevelCustomCurve.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5686933309886944997, guid: 32ee6867fbf831a448cf96b0f3da3784, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.3437552
@@ -3102,6 +3097,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: vodka
       objectReference: {fileID: 0}
+    - target: {fileID: 5567719885515966531, guid: 2d010dd36aabe844a96ff05fb5144a9b, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 8300000, guid: 908216b50d2adf943903ba96fd960c13, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7904,6 +7903,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1107562644535186256, guid: 2cb169941ffd20e4b8fbf523096df7d9, type: 3}
+      propertyPath: panLevelCustomCurve.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1229805793651844967, guid: 2cb169941ffd20e4b8fbf523096df7d9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.3437552
@@ -7964,6 +7967,10 @@ PrefabInstance:
     - target: {fileID: 201483512639925414, guid: ee423560f8f018e46b784f6d6114f8db, type: 3}
       propertyPath: m_Name
       value: BlueTarget
+      objectReference: {fileID: 0}
+    - target: {fileID: 225133346057246710, guid: ee423560f8f018e46b784f6d6114f8db, type: 3}
+      propertyPath: panLevelCustomCurve.m_Curve.Array.data[0].value
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6889159638530158478, guid: ee423560f8f018e46b784f6d6114f8db, type: 3}
       propertyPath: m_LocalPosition.x
