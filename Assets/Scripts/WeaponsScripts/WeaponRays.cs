@@ -1,10 +1,12 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
+
+[RequireComponent(typeof(AudioSource))]
 
 public class WeaponRays : MonoBehaviour
 {
@@ -51,6 +53,7 @@ public class WeaponRays : MonoBehaviour
     private LineRenderer lineRenderer;
     public float RayLifeTime = 3f;
 
+    private AudioSource audioSource;
 
     private void Awake()
     {
@@ -78,6 +81,8 @@ public class WeaponRays : MonoBehaviour
         readyToShoot = true;
         burstBulletsLeft = bulletsPerBurst;
         #endregion
+
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -102,6 +107,7 @@ public class WeaponRays : MonoBehaviour
         {
             burstBulletsLeft = bulletsPerBurst;
             FireWeapon();
+            audioSource.Play();
         }
     }
 

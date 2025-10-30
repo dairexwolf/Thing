@@ -1,11 +1,11 @@
-using NUnit.Framework;
+п»їusing NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider))]
 
 /// <summary>
-/// Скрипт бутылки. Считаю, что реализация бутылки в корне не верна - по сути, это должно быть 2 разных объект - нормальная бутылка и разрушенная бутылка, которая подменяет бутылку при разрушении
+/// РЎРєСЂРёРїС‚ Р±СѓС‚С‹Р»РєРё. РЎС‡РёС‚Р°СЋ, С‡С‚Рѕ СЂРµР°Р»РёР·Р°С†РёСЏ Р±СѓС‚С‹Р»РєРё РІ РєРѕСЂРЅРµ РЅРµ РІРµСЂРЅР° - РїРѕ СЃСѓС‚Рё, СЌС‚Рѕ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ 2 СЂР°Р·РЅС‹С… РѕР±СЉРµРєС‚ - РЅРѕСЂРјР°Р»СЊРЅР°СЏ Р±СѓС‚С‹Р»РєР° Рё СЂР°Р·СЂСѓС€РµРЅРЅР°СЏ Р±СѓС‚С‹Р»РєР°, РєРѕС‚РѕСЂР°СЏ РїРѕРґРјРµРЅСЏРµС‚ Р±СѓС‚С‹Р»РєСѓ РїСЂРё СЂР°Р·СЂСѓС€РµРЅРёРё
 /// </summary>
 public class Bottle : MonoBehaviour
 {
@@ -18,11 +18,11 @@ public class Bottle : MonoBehaviour
     }
 
     /// <summary>
-    /// Уничтожение бутылки и отдача ему силы для отпрасывания.
+    /// РЈРЅРёС‡С‚РѕР¶РµРЅРёРµ Р±СѓС‚С‹Р»РєРё Рё РѕС‚РґР°С‡Р° РµРјСѓ СЃРёР»С‹ РґР»СЏ РѕС‚РїСЂР°СЃС‹РІР°РЅРёСЏ.
     /// </summary>
-    /// <param name="hitPoint">Куда попал. Стоит отдавать raycastHit.point</param>
-    /// <param name="bulletSpawnPosition">Откуда стреляли. Стоит отдавать bulletSpawn.position, но с рандомными добавлениями к x и y для того, чтобы разлетались в стороны</param>
-    /// <param name="bulletForce">Сила пули, берется из характеристик оружия.</param>
+    /// <param name="hitPoint">РљСѓРґР° РїРѕРїР°Р». РЎС‚РѕРёС‚ РѕС‚РґР°РІР°С‚СЊ raycastHit.point</param>
+    /// <param name="bulletSpawnPosition">РћС‚РєСѓРґР° СЃС‚СЂРµР»СЏР»Рё. РЎС‚РѕРёС‚ РѕС‚РґР°РІР°С‚СЊ bulletSpawn.position, РЅРѕ СЃ СЂР°РЅРґРѕРјРЅС‹РјРё РґРѕР±Р°РІР»РµРЅРёСЏРјРё Рє x Рё y РґР»СЏ С‚РѕРіРѕ, С‡С‚РѕР±С‹ СЂР°Р·Р»РµС‚Р°Р»РёСЃСЊ РІ СЃС‚РѕСЂРѕРЅС‹</param>
+    /// <param name="bulletForce">РЎРёР»Р° РїСѓР»Рё, Р±РµСЂРµС‚СЃСЏ РёР· С…Р°СЂР°РєС‚РµСЂРёСЃС‚РёРє РѕСЂСѓР¶РёСЏ.</param>
     public void Shatter(Vector3 hitPoint, Vector3 bulletSpawnPosition, float bulletForce)
     {
         foreach(Rigidbody part in allParts)

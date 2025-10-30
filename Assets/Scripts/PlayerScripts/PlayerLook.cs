@@ -1,4 +1,4 @@
-using UnityEngine;
+п»їusing UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerLook : MonoBehaviour
@@ -40,7 +40,7 @@ public class PlayerLook : MonoBehaviour
         // Rotation around the x axis (Up and down)
         xRotation -= delta.y * mouseSensitivity * Time.deltaTime;
 
-        // Clamp the rotation (ограничить кароч)
+        // Clamp the rotation (РѕРіСЂР°РЅРёС‡РёС‚СЊ РєР°СЂРѕС‡)
         xRotation = Mathf.Clamp(xRotation, topClamp, bottomClamp);
 
         // Rotation around the y axis (Left and right)
