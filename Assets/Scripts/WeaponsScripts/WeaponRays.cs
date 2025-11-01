@@ -58,6 +58,7 @@ public class WeaponRays : MonoBehaviour
     public float RayLifeTime = 3f;
 
     private AudioSource audioSource;
+    private Animator animator;
 
     private void Awake()
     {
@@ -88,6 +89,7 @@ public class WeaponRays : MonoBehaviour
 
         audioSource = GetComponent<AudioSource>();
         particleSystem = muzzleEffect.GetComponent<ParticleSystem>();
+        animator = GetComponent<Animator>();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -114,6 +116,7 @@ public class WeaponRays : MonoBehaviour
             FireWeapon();
             audioSource.Play();
             particleSystem.Play();
+            animator.SetTrigger("RECOIL");
         }
     }
 
