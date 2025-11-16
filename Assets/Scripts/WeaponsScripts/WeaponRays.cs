@@ -7,8 +7,6 @@ using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 
-[RequireComponent(typeof(AudioSource))]
-
 public class WeaponRays : MonoBehaviour
 {
     public Camera playerCamera;
@@ -56,6 +54,17 @@ public class WeaponRays : MonoBehaviour
     public float reloadTime;
     public int magSize, bulletsLeft;
     public bool isReloading;
+
+    // Gun Type Settings
+    public enum WeaponModel
+    { 
+        M1911,
+        AK47
+    }
+
+    [Header("Gun Type")]
+    public WeaponModel thisWeaponModel;
+
 
 
     // Inputs
@@ -111,7 +120,7 @@ public class WeaponRays : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (bulletsLeft == 0 && isShooting) SoundManager.Instance.soundsAK47[1].Play();
+        if (bulletsLeft == 0 && isShooting) SoundManager.Instance.PlayDryFireSound(thisWeaponModel);
 
         if (currentShootingMode == ShootingMode.Auto)
         {
@@ -126,7 +135,7 @@ public class WeaponRays : MonoBehaviour
         {
             burstBulletsLeft = bulletsPerBurst;
             FireWeapon();
-            SoundManager.Instance.soundsAK47[0].Play();
+            SoundManager.Instance.PlaySootingSound(thisWeaponModel);
             particleSystem.Play();
             animator.SetTrigger("RECOIL");
         }
@@ -238,7 +247,7 @@ public class WeaponRays : MonoBehaviour
 
     private void ReloadWeapon()
     {
-        SoundManager.Instance.soundsAK47[2].Play();
+        SoundManager.Instance.PlayReloadingSound(thisWeaponModel);
         animator.SetTrigger("RELOAD");
         isReloading = true;
         Invoke("ReloadComplited", reloadTime);
