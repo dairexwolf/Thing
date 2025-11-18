@@ -295,7 +295,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5255497970842744906}
   serializedVersion: 2
-  m_LocalRotation: {x: -9.313226e-10, y: 0.99953365, z: -0.030538542, w: 0}
+  m_LocalRotation: {x: 0, y: 0.99953365, z: -0.030538544, w: 0}
   m_LocalPosition: {x: 0.172, y: -0.217, z: 0.6029999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -306,7 +306,7 @@ Transform:
   - {fileID: 9138391606616000351}
   - {fileID: 6496278821013665854}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 3.5, y: 180, z: 0}
 --- !u!33 &8015726901619715296
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -392,6 +392,8 @@ MonoBehaviour:
   bulletsLeft: 0
   isReloading: 0
   thisWeaponModel: 0
+  spawnPosition: {x: 0.172, y: -0.217, z: 0.6029999}
+  spawnRotation: {x: 3.5, y: 180, z: 0}
   RayLifeTime: 3
 --- !u!95 &4573972235666105523
 Animator:

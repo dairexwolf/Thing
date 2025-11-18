@@ -287,7 +287,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5735057360791182136
 Transform:
   m_ObjectHideFlags: 0
@@ -392,6 +392,8 @@ MonoBehaviour:
   bulletsLeft: 0
   isReloading: 0
   thisWeaponModel: 1
+  spawnPosition: {x: 0.194, y: -0.237, z: 0.606}
+  spawnRotation: {x: 4.706, y: -186, z: 0}
   RayLifeTime: 3
 --- !u!65 &6229711961481804926
 BoxCollider:

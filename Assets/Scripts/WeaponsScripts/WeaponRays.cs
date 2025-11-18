@@ -65,6 +65,9 @@ public class WeaponRays : MonoBehaviour
     [Header("Gun Type")]
     public WeaponModel thisWeaponModel;
 
+    [Header("Spawn Position Settings")]
+    [SerializeField] private Vector3 spawnPosition;
+    [SerializeField] private Vector3 spawnRotation;
 
 
     // Inputs
