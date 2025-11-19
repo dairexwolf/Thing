@@ -11,6 +11,8 @@ public class WeaponRays : MonoBehaviour
 {
     public Camera playerCamera;
 
+    public bool isActiveWeapon;
+
     // Shooting
     [Header("Shooting")]
     public bool isShooting;
@@ -50,6 +52,14 @@ public class WeaponRays : MonoBehaviour
     private AudioSource audioSource;
     private Animator animator;
 
+    public Animator Animator
+    {
+        get
+        {
+            return animator;
+        }
+    }
+
     [Header("Reloading")]
     public float reloadTime;
     public int magSize, bulletsLeft;
@@ -66,8 +76,8 @@ public class WeaponRays : MonoBehaviour
     public WeaponModel thisWeaponModel;
 
     [Header("Spawn Position Settings")]
-    [SerializeField] private Vector3 spawnPosition;
-    [SerializeField] private Vector3 spawnRotation;
+    public Vector3 spawnPosition;
+    public Vector3 spawnRotation;
 
 
     // Inputs
@@ -123,37 +133,43 @@ public class WeaponRays : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (bulletsLeft == 0 && isShooting) SoundManager.Instance.PlayDryFireSound(thisWeaponModel);
-
-        if (currentShootingMode == ShootingMode.Auto)
+        if (isActiveWeapon)
         {
-            isShooting = attackAction.IsPressed();
-        }
-        else if (currentShootingMode == ShootingMode.Single || currentShootingMode == ShootingMode.Burst)
-        {
-            isShooting = attackAction.WasPressedThisFrame();
-        }
+            // Если будет таким образон аутлайен, это позволит его 100% отключить. Но лучше придумать как жэто делать по другому
+            // GetComponent<Outline>().enabled = false;
 
-        if (readyToShoot && isShooting && bulletsLeft > 0 && !isReloading)
-        {
-            burstBulletsLeft = bulletsPerBurst;
-            FireWeapon();
-            SoundManager.Instance.PlaySootingSound(thisWeaponModel);
-            particleSystem.Play();
-            animator.SetTrigger("RECOIL");
-        }
+            if (bulletsLeft == 0 && isShooting) SoundManager.Instance.PlayDryFireSound(thisWeaponModel);
 
-        if (reloadAction.IsPressed() && bulletsLeft < magSize && !isReloading)
-        {
-            ReloadWeapon();
-        }
+            if (currentShootingMode == ShootingMode.Auto)
+            {
+                isShooting = attackAction.IsPressed();
+            }
+            else if (currentShootingMode == ShootingMode.Single || currentShootingMode == ShootingMode.Burst)
+            {
+                isShooting = attackAction.WasPressedThisFrame();
+            }
 
-        if (readyToShoot && !isShooting && !isReloading && bulletsLeft <= 0)
-        {
-            ReloadWeapon();
-        }
+            if (readyToShoot && isShooting && bulletsLeft > 0 && !isReloading)
+            {
+                burstBulletsLeft = bulletsPerBurst;
+                FireWeapon();
+                SoundManager.Instance.PlaySootingSound(thisWeaponModel);
+                particleSystem.Play();
+                animator.SetTrigger("RECOIL");
+            }
 
-        if (AmmoDisplayManager.Instance.ammoDisplay != null) AmmoDisplayManager.Instance.ammoDisplay.text = $"{bulletsLeft}/{magSize}";
+            if (reloadAction.IsPressed() && bulletsLeft < magSize && !isReloading)
+            {
+                ReloadWeapon();
+            }
+
+            if (readyToShoot && !isShooting && !isReloading && bulletsLeft <= 0)
+            {
+                ReloadWeapon();
+            }
+
+            if (AmmoDisplayManager.Instance.ammoDisplay != null) AmmoDisplayManager.Instance.ammoDisplay.text = $"{bulletsLeft}/{magSize}"; 
+        }
 
     }
 
