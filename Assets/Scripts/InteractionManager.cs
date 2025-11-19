@@ -1,10 +1,16 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class InteractionManager : MonoBehaviour
 {
+    // Input actions
+    InputAction interactAction;
+
     public static InteractionManager Instance { get; set; }
     [SerializeField] private Transform bulletSpawn;
+
+    private WeaponRays hoveredWeapon = null;
 
 
     private void Awake()
@@ -13,18 +19,52 @@ public class InteractionManager : MonoBehaviour
             Destroy(gameObject);
         else
             Instance = this;
+
+        interactAction = InputSystem.actions.FindAction("Interact");
     }
 
-    // Update is called once per frame
-    void Update()
+
+    private void Update()
     {
         Ray ray = new Ray(bulletSpawn.position, bulletSpawn.forward);
         RaycastHit hit;
-
-        if(Physics.Raycast(ray, out hit))
+        if (Physics.Raycast(ray, out hit))
         {
             GameObject objectHit = hit.transform.gameObject;
-            if (objectHit != null) print(objectHit.name);
+
+            if (objectHit.GetComponent<WeaponRays>())
+            {
+
+                if (interactAction.IsPressed())
+                {
+                    WeaponManager.Instance.PickupWeapon(objectHit);
+                }
+            }
         }
     }
+
+    // TODO: В Update стоит прописать доп. логику вызова отрисовки Outline при наведении курсора на объект. Желательно это сделать через интерфейс по типу IOutlinableObject или что то типо того + вызывать не if, а Event-ом
+    //void Update()
+    //{
+    //    Ray ray = new Ray(bulletSpawn.position, bulletSpawn.forward);
+    //    RaycastHit hit;
+
+    //    if (Physics.Raycast(ray, out hit))
+    //    {
+    //        GameObject objectHit = hit.transform.gameObject;
+
+    //        if (objectHit.GetComponent<WeaponRays>())
+    //        {
+    //            hoveredWeapon = objectHit.GetComponent<WeaponRays>();
+    //            hoveredWeapon.GetComponent<Outline>().enabled = true;
+    //        }
+    //        else
+    //        {
+    //            if (hoveredWeapon)
+    //            {
+    //                hoveredWeapon.GetComponent<Outline>().enabled = false;
+    //            }
+    //        }
+    //    }
+    //}
 }

@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 
-[RequireComponent(typeof(AudioSource))]
-
 public class WeaponRays : MonoBehaviour
 {
     public Camera playerCamera;
+
+    public bool isActiveWeapon;
 
     // Shooting
     [Header("Shooting")]
@@ -48,16 +49,46 @@ public class WeaponRays : MonoBehaviour
     [Header("Effects")]
     public GameObject muzzleEffect;
     private ParticleSystem particleSystem;
+    private AudioSource audioSource;
+    private Animator animator;
 
+    public Animator Animator
+    {
+        get
+        {
+            return animator;
+        }
+    }
+
+    [Header("Reloading")]
+    public float reloadTime;
+    public int magSize, bulletsLeft;
+    public bool isReloading;
+
+    // Gun Type Settings
+    public enum WeaponModel
+    { 
+        M1911,
+        AK47
+    }
+
+    [Header("Gun Type")]
+    public WeaponModel thisWeaponModel;
+
+    [Header("Spawn Position Settings")]
+    public Vector3 spawnPosition;
+    public Vector3 spawnRotation;
+
+
+    // Inputs
     InputAction attackAction;
-
-
+    InputAction reloadAction;
 
     // Test
     private LineRenderer lineRenderer;
     public float RayLifeTime = 3f;
 
-    private AudioSource audioSource;
+
 
     private void Awake()
     {
@@ -84,41 +115,67 @@ public class WeaponRays : MonoBehaviour
         #region Shooting Settings
         readyToShoot = true;
         burstBulletsLeft = bulletsPerBurst;
+        bulletsLeft = magSize;
         #endregion
 
         audioSource = GetComponent<AudioSource>();
         particleSystem = muzzleEffect.GetComponent<ParticleSystem>();
+        animator = GetComponent<Animator>();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         attackAction = InputSystem.actions.FindAction("Attack");
+        reloadAction = InputSystem.actions.FindAction("Reload");
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(currentShootingMode==ShootingMode.Auto)
+        if (isActiveWeapon)
         {
-            isShooting = attackAction.IsPressed();
-        }
-        else if(currentShootingMode==ShootingMode.Single || currentShootingMode==ShootingMode.Burst)
-        {
-            isShooting = attackAction.WasPressedThisFrame();
+            // Если будет таким образон аутлайен, это позволит его 100% отключить. Но лучше придумать как жэто делать по другому
+            // GetComponent<Outline>().enabled = false;
+
+            if (bulletsLeft == 0 && isShooting) SoundManager.Instance.PlayDryFireSound(thisWeaponModel);
+
+            if (currentShootingMode == ShootingMode.Auto)
+            {
+                isShooting = attackAction.IsPressed();
+            }
+            else if (currentShootingMode == ShootingMode.Single || currentShootingMode == ShootingMode.Burst)
+            {
+                isShooting = attackAction.WasPressedThisFrame();
+            }
+
+            if (readyToShoot && isShooting && bulletsLeft > 0 && !isReloading)
+            {
+                burstBulletsLeft = bulletsPerBurst;
+                FireWeapon();
+                SoundManager.Instance.PlaySootingSound(thisWeaponModel);
+                particleSystem.Play();
+                animator.SetTrigger("RECOIL");
+            }
+
+            if (reloadAction.IsPressed() && bulletsLeft < magSize && !isReloading)
+            {
+                ReloadWeapon();
+            }
+
+            if (readyToShoot && !isShooting && !isReloading && bulletsLeft <= 0)
+            {
+                ReloadWeapon();
+            }
+
+            if (AmmoDisplayManager.Instance.ammoDisplay != null) AmmoDisplayManager.Instance.ammoDisplay.text = $"{bulletsLeft}/{magSize}"; 
         }
 
-        if(readyToShoot && isShooting)
-        {
-            burstBulletsLeft = bulletsPerBurst;
-            FireWeapon();
-            audioSource.Play();
-            particleSystem.Play();
-        }
     }
 
     private void FireWeapon()
     {
+        bulletsLeft--;
         readyToShoot = false;
 
         Vector3 shootingDir = CalculateDirAndSpread().normalized;
@@ -156,18 +213,18 @@ public class WeaponRays : MonoBehaviour
                 if (objectWeHit.gameObject.CompareTag("Bottle"))
                 {
                     Bottle bottleScript = objectWeHit.gameObject.GetComponent<Bottle>();
-                    if (bottleScript!=null)
+                    if (bottleScript != null)
                     {
                         if (bottleScript.enabled)
                         {
                             bottleScript.Shatter(raycastHit.point, bulletSpawn.position, bulletForce);
                         }
-                        
+
                     }
                     else
                         raycastHit.rigidbody.AddForce((raycastHit.point - bulletSpawn.position).normalized * bulletForce, ForceMode.Impulse);
                     stop = false;
-                    
+
                 }
 
                 if (stop)
@@ -191,7 +248,7 @@ public class WeaponRays : MonoBehaviour
         StartCoroutine(DisableLineRenderer(RayLifeTime));
 
         // Checking if we are done shooting
-        if(allowReset)
+        if (allowReset)
         {
             Invoke("ResetShot", shootingDelay);
             allowReset = false;
@@ -199,12 +256,27 @@ public class WeaponRays : MonoBehaviour
 
         // Burst Mode
         {
-            if(currentShootingMode == ShootingMode.Burst && burstBulletsLeft>1)     // we already shoot once before this check
+            if (currentShootingMode == ShootingMode.Burst && burstBulletsLeft > 1)     // we already shoot once before this check
             {
                 burstBulletsLeft--;
                 Invoke("FireWeapon", shootingDelay);
             }
         }
+    }
+
+    private void ReloadWeapon()
+    {
+        SoundManager.Instance.PlayReloadingSound(thisWeaponModel);
+        animator.SetTrigger("RELOAD");
+        isReloading = true;
+        Invoke("ReloadComplited", reloadTime);
+        
+    }
+
+    private void ReloadComplited()
+    {
+        bulletsLeft = magSize;
+        isReloading = false;
     }
 
     private void ResetShot()
@@ -213,7 +285,7 @@ public class WeaponRays : MonoBehaviour
         allowReset = true;
     }
 
-    
+
     public Vector3 CalculateDirAndSpread()
     {
         #region PhysicMethod
