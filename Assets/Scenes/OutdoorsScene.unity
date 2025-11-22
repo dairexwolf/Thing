@@ -686,9 +686,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   bulletSpawn: {fileID: 1893483970280026498}
   playerCamera: {fileID: 1823688466}
-  weaponSlots:
-  - {fileID: 372296833}
-  - {fileID: 2117435614}
+  pistolSlot: {fileID: 372296833}
+  rifleSlot: {fileID: 2117435614}
   activeWeaponSlot: {fileID: 0}
 --- !u!4 &328296312
 Transform:

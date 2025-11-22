@@ -72,8 +72,15 @@ public class WeaponRays : MonoBehaviour
         AK47
     }
 
+    public enum WeaponType
+    {
+        pistol,
+        other
+    }
+
     [Header("Gun Type")]
     public WeaponModel thisWeaponModel;
+    public WeaponType thisWeaponType;
 
     [Header("Spawn Position Settings")]
     public Vector3 spawnPosition;
