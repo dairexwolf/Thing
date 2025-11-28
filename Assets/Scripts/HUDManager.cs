@@ -48,11 +48,11 @@ public class HUDManager : MonoBehaviour
             WeaponRays.WeaponModel type = activeWeapon.thisWeaponModel;
             ammoTypeUI.sprite = GetAmmoSprite(type);
 
-            activeWeaponUI.text = $"{activeWeapon.name}";
+            activeWeaponUI.text = $"{WeaponManager.Instance.GetWeaponModel(activeWeapon)}";
 
             if (unActiveWeapon)
             {
-                unActiveWeaponUI.text = $"{unActiveWeapon.name}";
+                unActiveWeaponUI.text = $"{WeaponManager.Instance.GetWeaponModel(unActiveWeapon)}";
             }
         }
         else

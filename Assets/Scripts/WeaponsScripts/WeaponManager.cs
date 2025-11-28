@@ -261,4 +261,17 @@ public class WeaponManager : MonoBehaviour
 
         isFirstSlot = !isFirstSlot;
     }
+
+    public string GetWeaponModel(WeaponRays weapon)
+    {
+        switch(weapon.thisWeaponModel)
+        {
+            case WeaponRays.WeaponModel.M1911: 
+                return "M1911";
+            case WeaponRays.WeaponModel.AK47:
+                return "AK-47";
+            default: 
+                return "";
+        }
+    }
 }
