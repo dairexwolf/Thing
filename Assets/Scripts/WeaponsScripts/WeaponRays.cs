@@ -175,7 +175,8 @@ public class WeaponRays : MonoBehaviour
                 ReloadWeapon();
             }
 
-            if (AmmoDisplayManager.Instance.ammoDisplay != null) AmmoDisplayManager.Instance.ammoDisplay.text = $"{bulletsLeft}/{magSize}"; 
+            // Старое отображение боеприпасов
+            //if (AmmoDisplayManager.Instance.ammoDisplay != null) AmmoDisplayManager.Instance.ammoDisplay.text = $"{bulletsLeft}/{magSize}"; 
         }
 
     }

@@ -25,6 +25,14 @@ public class WeaponManager : MonoBehaviour
     // Переключатель между первым и вторым слотом
     bool isFirstSlot = true;
 
+    public bool IsFirstSlot
+    {
+        get
+        {
+            return isFirstSlot;
+        }
+    }
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
