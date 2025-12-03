@@ -32,12 +32,24 @@ public class InteractionManager : MonoBehaviour
         {
             GameObject objectHit = hit.transform.gameObject;
 
+            // WeaponRay
             if (objectHit.GetComponent<WeaponRays>())
             {
 
                 if (interactAction.IsPressed())
                 {
                     WeaponManager.Instance.PickupWeapon(objectHit);
+                }
+            }
+
+            // AmmoBox
+            AmmoBox ammo = objectHit.GetComponent<AmmoBox>();
+            if (ammo)
+            {
+                if (interactAction.IsPressed())
+                {
+                    WeaponManager.Instance.PickupAmmo(ammo);
+                    Destroy(objectHit);
                 }
             }
         }

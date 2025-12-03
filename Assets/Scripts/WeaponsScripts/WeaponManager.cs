@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static WeaponRays;
 
 public class WeaponManager : MonoBehaviour
 {
@@ -22,8 +23,14 @@ public class WeaponManager : MonoBehaviour
     // Input actions
     InputAction switchWeaponAction;
 
+    [Header("Ammo")]
+    public int totalRifleAmmo = 0;
+    public int totalPistolAmmo = 0;
+
     // Переключатель между первым и вторым слотом
     bool isFirstSlot = true;
+
+    private WeaponRays currentWeapon;
 
     public bool IsFirstSlot
     {
@@ -76,17 +83,34 @@ public class WeaponManager : MonoBehaviour
         //    }
         //}
         #endregion
-
-        if (switchWeaponAction.WasPressedThisFrame())
+        if (!currentWeapon)
         {
-            switch (isFirstSlot)
+            if (switchWeaponAction.WasPressedThisFrame())
             {
-                case true:
-                    SwitchActiveSlot();
-                    break;
-                case false:
-                    SwitchActiveSlot();
-                    break;
+                switch (isFirstSlot)
+                {
+                    case true:
+                        SwitchActiveSlot();
+                        break;
+                    case false:
+                        SwitchActiveSlot();
+                        break;
+                }
+            }
+        }
+        else
+        {
+            if (switchWeaponAction.WasPressedThisFrame() && !currentWeapon.isReloading)
+            {
+                switch (isFirstSlot)
+                {
+                    case true:
+                        SwitchActiveSlot();
+                        break;
+                    case false:
+                        SwitchActiveSlot();
+                        break;
+                }
             }
         }
     }
@@ -160,7 +184,10 @@ public class WeaponManager : MonoBehaviour
             pickedupWeapon.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
 
             if (activeWeaponSlot.transform.childCount == 0)
+            {
                 SwitchActiveSlot();
+                currentWeapon = weapon;
+            }
             else
             {
                 if (!isActiveSlotHadWeapon)
@@ -169,8 +196,12 @@ public class WeaponManager : MonoBehaviour
                 }
                 else
                 {
-                    if(activeWeaponSlot==replasedSlot)
+                    if (activeWeaponSlot == replasedSlot)
+                    {
                         pickedupWeapon.SetActive(true);
+                        currentWeapon = weapon;
+                    }
+
                     else
                         pickedupWeapon.SetActive(false);
                 }
@@ -257,6 +288,7 @@ public class WeaponManager : MonoBehaviour
             WeaponRays currentWeapon = activeWeaponSlot.transform.GetChild(0).GetComponent<WeaponRays>();
             currentWeapon.isActiveWeapon = true;
             currentWeapon.gameObject.SetActive(true);
+            this.currentWeapon = currentWeapon;
         }
 
         isFirstSlot = !isFirstSlot;
@@ -264,14 +296,62 @@ public class WeaponManager : MonoBehaviour
 
     public string GetWeaponModel(WeaponRays weapon)
     {
-        switch(weapon.thisWeaponModel)
+        switch (weapon.thisWeaponModel)
         {
-            case WeaponRays.WeaponModel.M1911: 
+            case WeaponRays.WeaponModel.M1911:
                 return "M1911";
             case WeaponRays.WeaponModel.AK47:
                 return "AK-47";
-            default: 
+            default:
                 return "";
+        }
+    }
+
+    internal void PickupAmmo(AmmoBox ammo)
+    {
+        switch (ammo.ammoType)
+        {
+            case AmmoBox.AmmoType.PistolAmmo:
+                totalPistolAmmo += ammo.ammoAmount;
+                break;
+            case AmmoBox.AmmoType.RifleAmmo:
+                totalRifleAmmo += ammo.ammoAmount;
+                break;
+            default:
+                print("Unknown ammotype");
+                break;
+        }
+    }
+
+    public void DecreaseTotalAmmo(int bulletsToDecrease, WeaponRays.WeaponModel thisWeaponModel)
+    {
+        switch (thisWeaponModel)
+        {
+            case WeaponModel.AK47:
+                totalRifleAmmo -= bulletsToDecrease;
+                break;
+            case WeaponModel.M1911:
+                totalPistolAmmo -= bulletsToDecrease;
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Метод, который проверяет количество доступных патронов у игрока для этого оружия. 
+    /// TODO: переделать, захардкожены виды оружия
+    /// </summary>
+    /// <param name="thisWeaponModel"></param>
+    /// <returns></returns>
+    public int CheckAmmoLeftFor(WeaponModel thisWeaponModel)
+    {
+        switch (thisWeaponModel)
+        {
+            case WeaponModel.AK47:
+                return WeaponManager.Instance.totalRifleAmmo;
+            case WeaponModel.M1911:
+                return WeaponManager.Instance.totalPistolAmmo;
+            default:
+                return 0;
         }
     }
 }
