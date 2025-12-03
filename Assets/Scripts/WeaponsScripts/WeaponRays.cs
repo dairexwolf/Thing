@@ -67,13 +67,20 @@ public class WeaponRays : MonoBehaviour
 
     // Gun Type Settings
     public enum WeaponModel
-    { 
+    {
         M1911,
         AK47
     }
 
+    public enum WeaponType
+    {
+        pistol,
+        other
+    }
+
     [Header("Gun Type")]
     public WeaponModel thisWeaponModel;
+    public WeaponType thisWeaponType;
 
     [Header("Spawn Position Settings")]
     public Vector3 spawnPosition;
@@ -158,17 +165,18 @@ public class WeaponRays : MonoBehaviour
                 animator.SetTrigger("RECOIL");
             }
 
-            if (reloadAction.IsPressed() && bulletsLeft < magSize && !isReloading)
+            if (reloadAction.IsPressed() && bulletsLeft < magSize && !isReloading && WeaponManager.Instance.CheckAmmoLeftFor(thisWeaponModel) > 0)
             {
                 ReloadWeapon();
             }
 
-            if (readyToShoot && !isShooting && !isReloading && bulletsLeft <= 0)
+            if (readyToShoot && !isShooting && !isReloading && bulletsLeft <= 0 && WeaponManager.Instance.CheckAmmoLeftFor(thisWeaponModel) > 0)
             {
                 ReloadWeapon();
             }
 
-            if (AmmoDisplayManager.Instance.ammoDisplay != null) AmmoDisplayManager.Instance.ammoDisplay.text = $"{bulletsLeft}/{magSize}"; 
+            // Старое отображение боеприпасов
+            //if (AmmoDisplayManager.Instance.ammoDisplay != null) AmmoDisplayManager.Instance.ammoDisplay.text = $"{bulletsLeft}/{magSize}"; 
         }
 
     }
@@ -270,12 +278,22 @@ public class WeaponRays : MonoBehaviour
         animator.SetTrigger("RELOAD");
         isReloading = true;
         Invoke("ReloadComplited", reloadTime);
-        
+
     }
 
     private void ReloadComplited()
     {
-        bulletsLeft = magSize;
+        if (WeaponManager.Instance.CheckAmmoLeftFor(thisWeaponModel) > magSize)
+        {
+            WeaponManager.Instance.DecreaseTotalAmmo(magSize-bulletsLeft, thisWeaponModel);
+            bulletsLeft = magSize;
+        }
+        else
+        {
+            bulletsLeft = WeaponManager.Instance.CheckAmmoLeftFor(thisWeaponModel);
+            WeaponManager.Instance.DecreaseTotalAmmo(bulletsLeft, thisWeaponModel);
+        }
+
         isReloading = false;
     }
 
@@ -343,5 +361,6 @@ public class WeaponRays : MonoBehaviour
         GameObject hole = Instantiate(GlobalRefs.Instance.bulletImpactEffectPrefab, hit.point, Quaternion.LookRotation(hit.normal));
         hole.transform.SetParent(hit.collider.gameObject.transform);
     }
+
 
 }
