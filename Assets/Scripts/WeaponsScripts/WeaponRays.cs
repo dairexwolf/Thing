@@ -90,6 +90,7 @@ public class WeaponRays : MonoBehaviour
     // Inputs
     InputAction attackAction;
     InputAction reloadAction;
+    InputAction adsAction;
 
     // Test
     private LineRenderer lineRenderer;
@@ -135,6 +136,9 @@ public class WeaponRays : MonoBehaviour
     {
         attackAction = InputSystem.actions.FindAction("Attack");
         reloadAction = InputSystem.actions.FindAction("Reload");
+        adsAction = InputSystem.actions.FindAction("ADS");
+        // adsAction.started += PlayerAimAction;
+        // adsAction.performed += PlayerAimAction;
     }
 
     // Update is called once per frame
@@ -142,6 +146,13 @@ public class WeaponRays : MonoBehaviour
     {
         if (isActiveWeapon)
         {
+            // Input System 14 - прицеливание через зажатие клавиши
+            bool isAiming = adsAction.ReadValue<float>() > 0.5f;
+            if (isAiming)
+                animator.SetTrigger("enterADS");
+            if (!isAiming)
+                animator.SetTrigger("exitADS");
+
             // Если будет таким образон аутлайен, это позволит его 100% отключить. Но лучше придумать как жэто делать по другому
             // GetComponent<Outline>().enabled = false;
 
@@ -285,7 +296,7 @@ public class WeaponRays : MonoBehaviour
     {
         if (WeaponManager.Instance.CheckAmmoLeftFor(thisWeaponModel) > magSize)
         {
-            WeaponManager.Instance.DecreaseTotalAmmo(magSize-bulletsLeft, thisWeaponModel);
+            WeaponManager.Instance.DecreaseTotalAmmo(magSize - bulletsLeft, thisWeaponModel);
             bulletsLeft = magSize;
         }
         else
@@ -362,5 +373,19 @@ public class WeaponRays : MonoBehaviour
         hole.transform.SetParent(hit.collider.gameObject.transform);
     }
 
-
+    // Состояния через InputSystem - 1 раз нажал и готово
+    private void PlayerAimAction(InputAction.CallbackContext context)
+    {
+        if (isActiveWeapon && !isReloading)
+        {
+            if (context.started)
+            {
+                animator.SetTrigger("enterADS");
+            }
+            if (context.performed)
+            {
+                animator.SetTrigger("exitADS");
+            }
+        }
+    }
 }
