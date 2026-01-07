@@ -386,7 +386,8 @@ MonoBehaviour:
   bulletForce: 30
   bulletsPerBurst: 1
   burstBulletsLeft: 0
-  spreadIntensity: 0
+  hipSpreadIntensity: 5
+  adsSpreadIntensity: 0.5
   currentShootingMode: 0
   bulletSpawn: {fileID: 0}
   maxDistance: 100

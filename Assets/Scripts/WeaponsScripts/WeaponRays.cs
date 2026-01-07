@@ -28,7 +28,12 @@ public class WeaponRays : MonoBehaviour
 
     // Spread
     [Header("Spread")]
-    public float spreadIntensity;
+    // Разброс оружия внутренний
+    private float spreadIntensity;
+    [Tooltip("Разброс оружия от бедра")]
+    public float hipSpreadIntensity;
+    [Tooltip("Разброс оружия при прицеливании")]
+    public float adsSpreadIntensity;
 
     // Shooting Mode settings
     public enum ShootingMode
@@ -92,6 +97,8 @@ public class WeaponRays : MonoBehaviour
     InputAction reloadAction;
     InputAction adsAction;
 
+    bool isADS;
+
     // Test
     private LineRenderer lineRenderer;
     public float RayLifeTime = 3f;
@@ -129,6 +136,8 @@ public class WeaponRays : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         particleSystem = muzzleEffect.GetComponent<ParticleSystem>();
         animator = GetComponent<Animator>();
+
+        spreadIntensity = hipSpreadIntensity;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -146,12 +155,29 @@ public class WeaponRays : MonoBehaviour
     {
         if (isActiveWeapon)
         {
-            // Input System 14 - прицеливание через зажатие клавиши
-            bool isAiming = adsAction.ReadValue<float>() > 0.5f;
-            if (isAiming)
-                animator.SetTrigger("enterADS");
-            if (!isAiming)
-                animator.SetTrigger("exitADS");
+            // Input System 14 - прицеливание через зажатие клавиши не работает, а если делать как в документации - там получается мрак. Задача на потом - сделать через Input Action Asset (гуглится в ютубе "создание управлениыя через Unity Input System 14)
+            // TODO: стрельба в анимации, переход к перезарядке и др
+            //bool isAiming = adsAction.ReadValue<float>() > 0.5f;
+            //if (isAiming && !isReloading)
+            //{
+            //    animator.SetTrigger("enterADS");
+            //    isADS = true;
+            //}
+            //if (!isAiming)
+            //{
+            //    animator.SetTrigger("exitADS");
+            //    isADS = false;
+            //}
+
+            // Использование старого Input
+            if (Input.GetMouseButtonDown(1) && !isReloading && !isADS)
+            {
+                EnterADS();
+            }
+            if (Input.GetMouseButtonUp(1) && !isReloading && isADS)
+            {
+                ExitADS();
+            }
 
             // Если будет таким образон аутлайен, это позволит его 100% отключить. Но лучше придумать как жэто делать по другому
             // GetComponent<Outline>().enabled = false;
@@ -171,9 +197,6 @@ public class WeaponRays : MonoBehaviour
             {
                 burstBulletsLeft = bulletsPerBurst;
                 FireWeapon();
-                SoundManager.Instance.PlaySootingSound(thisWeaponModel);
-                particleSystem.Play();
-                animator.SetTrigger("RECOIL");
             }
 
             if (reloadAction.IsPressed() && bulletsLeft < magSize && !isReloading && WeaponManager.Instance.CheckAmmoLeftFor(thisWeaponModel) > 0)
@@ -192,10 +215,43 @@ public class WeaponRays : MonoBehaviour
 
     }
 
+    private void EnterADS()
+    {
+        animator.SetTrigger("enterADS");
+        isADS = true;
+        // TODO: Ясное дело переделать под событие, как и ExitADS
+        HUDManager.Instance.middleDot.SetActive(false);
+        spreadIntensity = adsSpreadIntensity;
+    }
+
+    private void ExitADS()
+    {
+        animator.SetTrigger("exitADS");
+        isADS = false;
+        HUDManager.Instance.middleDot.SetActive(true);
+        spreadIntensity = hipSpreadIntensity;
+    }
+
     private void FireWeapon()
     {
         bulletsLeft--;
         readyToShoot = false;
+
+        SoundManager.Instance.PlaySootingSound(thisWeaponModel);
+        particleSystem.Play();
+
+        if (isADS)
+        {
+            // Recoil ADS
+            animator.SetTrigger("RECOIL_ADS");
+        }
+        else
+        {
+            // Recoil Standart
+            animator.SetTrigger("RECOIL");
+        }
+
+
 
         Vector3 shootingDir = CalculateDirAndSpread().normalized;
         // Start Ray
@@ -285,6 +341,10 @@ public class WeaponRays : MonoBehaviour
 
     private void ReloadWeapon()
     {
+        if(isADS)
+        {
+            ExitADS();
+        }
         SoundManager.Instance.PlayReloadingSound(thisWeaponModel);
         animator.SetTrigger("RELOAD");
         isReloading = true;
